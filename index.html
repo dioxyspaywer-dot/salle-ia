@@ -1,0 +1,215 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14080b"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg"><title>Salle IA</title>
+<style>
+:root{--bg:#14080b;--pn:#211015;--ln:#3a1b23;--red:#e5233d;--red2:#ff5a6e;--cy:#2ee6d6;--vi:#a58bff;--tx:#f6e9ea;--mu:#b39499}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,sans-serif;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+header{padding:12px 16px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:18px;flex:1;min-width:100px}
+.ag{display:flex;gap:6px}
+.ag i{font-style:normal;font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid currentColor;opacity:.45}
+.ag i.on{opacity:1;animation:p 1s infinite alternate}
+@keyframes p{from{box-shadow:0 0 12px currentColor}to{box-shadow:0 0 2px currentColor}}
+main{flex:1;min-height:0;position:relative}
+.v{position:absolute;inset:0;display:none;flex-direction:column}
+.v.on{display:flex}
+.sc{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.m{background:var(--pn);border-left:3px solid var(--c,var(--red));border-radius:12px;padding:10px 14px;max-width:96%;white-space:pre-wrap;word-break:break-word;font-size:15px}
+.m b{font-size:14px;color:var(--c,var(--red2))}
+.m small{display:block;font-size:11.5px;color:var(--mu);margin-bottom:6px}
+.m.me{align-self:flex-end;background:var(--red);border-color:var(--red2);--c:#fff}
+.m.dec{border-color:var(--cy);box-shadow:0 0 0 1px var(--cy) inset}
+.chip,.cp,.at{font:inherit;font-size:14px;border:1px solid var(--red2);background:#2c0f16;color:var(--tx);border-radius:9px;padding:7px 12px;margin:0 6px 6px 0;cursor:pointer}
+.chip.ok,.cp.ok{background:var(--cy);color:#06201e;border-color:var(--cy)}
+.dock{border-top:1px solid var(--ln);padding:12px 16px;display:flex;flex-direction:column;gap:10px;background:#18090d}
+.row{display:flex;gap:10px;align-items:center}
+.hint{font-size:12.5px;color:var(--mu);flex:1}
+.ats{display:flex;gap:8px;overflow-x:auto}
+.at{margin:0;white-space:nowrap;border-color:var(--ln)}
+textarea,input,select{background:var(--pn);color:var(--tx);border:1px solid var(--ln);border-radius:12px;padding:12px;font:inherit;width:100%}
+textarea{resize:none;min-height:56px;max-height:150px;flex:1;line-height:1.4}
+.btn{background:var(--red);color:#fff;border:0;border-radius:12px;padding:0 16px;height:56px;font:inherit;font-weight:600;cursor:pointer}
+.btn.s{height:44px;font-size:15px}
+.btn.g{background:var(--pn);border:1px solid var(--ln);color:var(--tx)}
+.btn.m1{background:#3a2a0f;border-color:#d99a2b}.btn.m2{background:#2a1a4d;border-color:var(--vi)}
+.mic.rec{background:var(--red2);color:#fff;animation:p 1s infinite alternate}
+.f{background:var(--pn);border:1px solid var(--ln);border-radius:12px;overflow:hidden}
+.fh{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--ln);flex-wrap:wrap}
+pre{padding:12px;overflow:auto;max-height:46vh;font:13px/1.45 ui-monospace,monospace;color:#ffd9de}
+iframe{flex:1;border:0;background:#fff}
+nav{display:flex;border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:0;border:0;color:var(--mu);padding:13px 4px;font:inherit;font-size:13px;cursor:pointer}
+nav button.on{color:var(--red2);box-shadow:inset 0 2px var(--red)}
+label{font-size:13px;color:var(--mu);display:block;margin:12px 0 5px}
+.em{color:var(--mu);text-align:center;margin:auto;max-width:290px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:12px 14px;margin-top:12px}
+.card h3{font-size:15px;margin-bottom:6px}
+.g3{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+details{margin-top:14px;font-size:14.5px}summary{cursor:pointer;color:var(--red2);font-weight:600}
+details p{margin-top:8px;color:var(--tx)}
+.spk{font:inherit;font-size:13.5px;margin-top:8px;border:1px solid var(--ln);background:transparent;color:var(--mu);border-radius:9px;padding:7px 12px;cursor:pointer}
+.pic{display:block;max-width:100%;border-radius:10px;margin-top:8px}.thumb{height:56px;border-radius:8px}.btn.ic{width:52px;padding:0;flex:none}
+</style></head><body>
+<header><h1>Salle IA</h1><div class="ag" id="ag"></div></header>
+<main>
+<section class="v on" id="v0"><div class="sc" id="log"></div>
+<div class="dock">
+<div class="row"><button class="btn s g" id="mode"></button><span class="hint" id="mh"></span><button class="btn s g" id="stp" style="display:none">Stop</button></div>
+<div class="row" id="th" style="display:none"><img id="thi" class="thumb"><span class="hint">Image jointe</span><button class="btn s g" id="thx">Retirer</button></div>
+<div class="ats" id="ats"></div>
+<div class="row"><textarea id="in" rows="1" placeholder="Écris ou parle…"></textarea><button class="btn g ic" id="att" title="Image">📎</button><input type="file" id="fi" accept="image/*" hidden><button class="btn g mic ic" id="mic" title="Parler">🎤</button><button class="btn" id="go">Envoyer</button></div>
+</div></section>
+<section class="v" id="v1"><div class="sc" id="codes"></div></section>
+<section class="v" id="v2"><div class="row" style="padding:8px 12px;border-bottom:1px solid var(--ln)"><select id="pg"></select><button class="btn s g ic" id="pr" title="Recharger">↻</button><button class="btn s g ic" id="pc" title="Effacer les données de l’aperçu">🧹</button></div><iframe id="pv" sandbox="allow-scripts"></iframe></section>
+<section class="v" id="v3"><div class="sc">
+<label>Clé Gemini (aistudio.google.com)</label><input id="k1" type="password">
+<label>Clé OpenRouter (openrouter.ai)</label><input id="k2" type="password">
+<div id="cfg"></div>
+<label>Tours maximum en mode travail</label><input id="mx" type="number" min="2" max="20">
+<details open><summary>📖 Comment ça marche</summary>
+<p><b>Les 3 IA.</b> Archi planifie, Dev écrit le code (en fichiers séparés index.html, style.css, script.js), Critique cherche les défauts. Sous chaque nom tu vois quel modèle répond vraiment.</p>
+<p><b>💬 Discussion.</b> Tu écris ou tu parles (🎤), chaque IA répond. Touche @Dev, @Archi ou @Critique pour n’interroger qu’une seule IA.</p>
+<p><b>🛠️ Travail.</b> Tu donnes un brief : les IA s’enchaînent seules jusqu’à ce que Critique dise VALIDÉ, ou jusqu’au maximum de tours. Bouton Stop pour arrêter.</p>
+<p><b>⚖️ Décision.</b> Chaque IA donne son avis, puis Archi tranche et t’envoie la réponse finale (bloc bleu « Décision de l’équipe »).</p>
+<p><b>💻 Code.</b> Touche le nom d’un fichier pour copier son nom, « Copier le code » pour copier son contenu, puis colle dans ton dépôt GitHub. <b>👁️ Aperçu</b> montre la page.</p>
+<p><b>🔊 Écouter.</b> Sous chaque réponse, touche 🔊 pour que l’IA la lise à voix haute. <b>📎 Image.</b> Joins une photo à ton message : elle est envoyée aux IA (Gemini sait la lire ; un modèle OpenRouter doit accepter les images).</p>
+<p><b>✂️ Séparation automatique.</b> Si une IA met le CSS ou le JavaScript dans la page HTML, l’application les sépare toute seule en style.css et script.js et les relie. Ces fichiers portent un ✂️ dans la salle.</p>
+<p><b>👁️ Aperçu.</b> Les fichiers restent séparés dans l’onglet Code ; seul l’aperçu les assemble. Plusieurs pages HTML : touche un lien pour passer d’une page à l’autre, ou choisis la page dans la liste. React (fichier .jsx) marche avec internet. Un fichier Python (.py) apparaît dans la liste avec ▶ : touche-le pour l’exécuter et voir son résultat (premier chargement lourd, environ 10 Mo). 🧹 efface les données de l’aperçu (faux panier, faux comptes). Un vrai serveur (Node, PHP) ne peut pas tourner dans un téléphone : l’IA simule alors le backend en JavaScript.</p>
+<p><b>Combiner les IA.</b> Ci-dessus, choisis pour chaque IA le fournisseur et le modèle, ou désactive-la. Sans clé OpenRouter, Dev utilise Gemini (indiqué « remplaçant »).</p></details>
+<button class="btn s g" id="clr" style="margin-top:16px">Vider la salle</button>
+<p class="em" style="margin-top:12px">Tes clés restent dans ce téléphone.</p></div></section>
+</main>
+<nav id="nv"><button class="on">💬 Salle</button><button>💻 Code</button><button>👁️ Aperçu</button><button>⚙️ Réglages</button></nav>
+<script>
+const $=s=>document.querySelector(s),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),esr=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const S=Object.assign({k1:'',k2:'',m1:'gemini-3.8-flash',m2:'qwen/qwen3-coder:free',mx:6,msgs:[],files:{},mode:0},JSON.parse(localStorage.getItem('sia')||'{}'));
+S.ag=S.ag||{archi:{p:1,m:S.m1,on:true},dev:{p:2,m:S.m2,on:true},crit:{p:1,m:S.m1,on:true}};
+const save=()=>{try{localStorage.setItem('sia',JSON.stringify(S))}catch(_){}};
+const AG=[
+{id:'archi',n:'Archi',c:'#2ee6d6',r:"Tu es Archi, architecte logiciel. Tu proposes un plan court et clair, sans écrire tout le code."},
+{id:'dev',n:'Dev',c:'#ff5a6e',r:"Tu es Dev, développeur web. RÈGLES : 1) Fichiers séparés : index.html contient seulement la structure, reliée par <link rel=\"stylesheet\" href=\"style.css\"> et <script src=\"script.js\"><\/script>. Tout le CSS dans style.css, tout le JavaScript dans script.js. Jamais de CSS ni de JS dans les pages HTML. 2) Plusieurs pages : une page par fichier (panier.html, produit.html...), reliées par de vrais liens <a href=\"panier.html\">, chacune avec les mêmes style.css et script.js. 3) Pas de vrai serveur dans l'aperçu : simule le backend en JavaScript (produits d'exemple, panier, comptes) avec localStorage, dans script.js ou api.js ; ne crée un vrai backend Node ou Python que si Emmanuel le demande. 4) React seulement si demandé : aucun import, utilise les globales React et ReactDOM dans app.jsx, avec <div id=\"root\"></div> dans index.html et <script src=\"app.jsx\"><\/script>. 5) Python seulement si demandé : fichier main.py, sans input(). Chaque fichier dans son propre bloc avec le nom après le langage, par exemple ```css style.css. Code COMPLET."},
+{id:'crit',n:'Critique',c:'#a58bff',r:"Tu es Critique. Tu trouves au moins un défaut concret. Tu vérifies : fichiers séparés (index.html, style.css, script.js), pages bien reliées entre elles, backend simulé en JavaScript (pas de vrai serveur), code complet. Commence ta réponse par VALIDÉ seulement si tout est vraiment bon."}];
+const MODES=[['💬 Discussion','Chaque IA répond à ton message.','g'],['🛠️ Travail','Les IA s’enchaînent seules pour construire.','m1'],['⚖️ Décision','Chaque IA donne son avis, puis l’équipe tranche.','m2']];
+const PN=p=>p==1?'Gemini':'OpenRouter',key=p=>p==1?S.k1:S.k2;
+let stop=false,last='',busy='';
+const files=t=>[...t.matchAll(/```(\w*)[ \t]*([^\n]*)\n([\s\S]*?)```/g)].map(m=>({n:m[2].trim()||(m[1]=='css'?'style.css':/^(js|javascript)$/.test(m[1])?'script.js':'index.html'),c:m[3]}));
+const strip=t=>t.replace(/```[\s\S]*?```/g,'').trim();
+const act=()=>AG.filter(a=>S.ag[a.id].on);
+const gm=()=>(Object.values(S.ag).find(c=>c.p==1)||{}).m||S.m1;
+function route(a){let{p,m}=S.ag[a.id],fb=false;if(!key(p)){const q=p==1?2:1;if(key(q)){p=q;m=q==1?gm():S.m2;fb=true}}return{p,m,fb,lb:PN(p)+' · '+m+(fb?' · remplaçant':'')}}
+async function call(a,r,extra){
+ const key_=key(r.p);if(!key_)throw Error('Ajoute au moins une clé (Gemini ou OpenRouter) dans ⚙️ Réglages.');
+ const nm=id=>id=='me'?'Emmanuel':AG.find(x=>x.id==id).n;
+ const im=(S.msgs.slice(-16).reverse().find(m=>m.img)||{}).img;
+ const fl=Object.entries(S.files).map(([n,c])=>'--- '+n+'\n'+c).join('\n').slice(0,12000);
+ const pr=a.r+" Réponds en français, bref sauf pour le code. Tu es dans une salle avec Emmanuel et d'autres IA.\n\nConversation:\n"+S.msgs.slice(-16).map(m=>'['+nm(m.w)+'] '+m.t).join('\n')+(fl?'\n\nFichiers actuels:\n'+fl:'')+'\n\nÀ toi, '+a.n+'.'+(im?' Emmanuel a joint une image à son dernier message.':'')+(extra?' '+extra:'');
+ if(r.p==1){const x=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+r.m+':generateContent?key='+key_,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:im?[{text:pr},{inlineData:{mimeType:'image/jpeg',data:im.split(',')[1]}}]:[{text:pr}]}]})});const d=await x.json();if(!x.ok)throw Error(d.error?.message||x.status);return d.candidates[0].content.parts.map(p=>p.text).join('')}
+ const x=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+key_},body:JSON.stringify({model:r.m,messages:[{role:'user',content:im?[{type:'text',text:pr},{type:'image_url',image_url:{url:im}}]:pr}]})});const d=await x.json();if(!x.ok)throw Error(d.error?.message||x.status);return d.choices[0].message.content}
+const hasLink=(h,fn)=>new RegExp('<link[^>]*href=["\'][^"\']*'+esr(fn)+'["\']','i').test(h),hasSrc=(h,fn)=>new RegExp('<scr'+'ipt[^>]*src=["\'][^"\']*'+esr(fn)+'["\']','i').test(h);
+function splitHtml(h,name,given){
+ const made=[],css=[],js=[],reS=/<style(?:\s+type=["']text\/css["'])?\s*>([\s\S]*?)<\/style>/gi,reJ=/<script(?:\s+type=["'](?:text\/javascript|application\/javascript)["'])?\s*>([\s\S]*?)<\/script>/gi,idx=/(^|\/)index\.html?$/i.test(name);
+ let ci=0,ji=0;
+ h=h.replace(reS,(m,c)=>{if(!c.trim())return m;css.push(c.trim());return ci++?'':'@@CSS@@'});
+ const ok=c=>c.trim()&&!/tailwind\.config/.test(c),nj=[...h.matchAll(reJ)].filter(m=>ok(m[1])).length;
+ h=h.replace(reJ,(m,c)=>{if(!ok(c))return m;js.push(c.trim());return ++ji==nj?'@@JS@@':''});
+ const put=(fn,arr)=>{const text=arr.join('\n\n'),old=S.files[fn],flat=x=>x.replace(/\s+/g,'');
+  if(old==null||(idx&&!given.has(fn))){if(old!==text){S.files[fn]=text;made.push(fn)}}
+  else if(!flat(old).includes(flat(text))){S.files[fn]=old+'\n\n'+text;made.push(fn)}};
+ if(css.length){put('style.css',css);const k=hasLink(h,'style.css');h=h.replace('@@CSS@@',()=>k?'':'<link rel="stylesheet" href="style.css">')}
+ if(js.length){put('script.js',js);const k=hasSrc(h,'script.js');h=h.replace('@@JS@@',()=>k?'':'<scr'+'ipt src="script.js"><\/scr'+'ipt>')}
+ return{h,made}}
+function ingest(t){const F=files(t),given=new Set(F.map(f=>f.n)),made=[];
+ F.forEach(f=>{S.files[f.n]=f.c});
+ F.forEach(f=>{if(/\.html?$/i.test(f.n)){const r=splitHtml(S.files[f.n],f.n,given);S.files[f.n]=r.h;r.made.forEach(n=>{if(!made.includes(n))made.push(n)})}});
+ return made}
+const mark=id=>document.querySelectorAll('.ag i').forEach(i=>i.classList.toggle('on',i.dataset.i==id));
+async function turn(a,extra,tag){
+ const r=route(a);busy=a.n+' ('+r.lb+')';mark(a.id);draw();let t,sp=[];
+ try{t=await call(a,r,extra);sp=ingest(t)}catch(e){t='⚠️ '+e.message}
+ last=t;S.msgs.push({w:a.id,t,lb:r.lb,tag,sp});busy='';save();mark();draw()}
+let cur='index.html',PVS={},lastK='';
+const pages=()=>Object.keys(S.files).filter(n=>/\.html?$/i.test(n)),pys=()=>Object.keys(S.files).filter(n=>/\.py$/i.test(n));
+const scr=(a,c,j)=>'<scr'+'ipt'+(j&&!/type\s*=/i.test(a)?' type="text/babel" data-presets="react"':'')+a+'>'+c+'<\/scr'+'ipt>';
+function shim(){const d=JSON.stringify(PVS).replace(/</g,'\\u003c');
+ return '<scr'+'ipt>(function(){var d='+d+';function sync(){try{parent.postMessage({sia:"store",d:d},"*")}catch(e){}}var st={getItem:function(k){return k in d?d[k]:null},setItem:function(k,v){d[k]=String(v);sync()},removeItem:function(k){delete d[k];sync()},clear:function(){d={};sync()},key:function(i){return Object.keys(d)[i]||null}};Object.defineProperty(st,"length",{get:function(){return Object.keys(d).length}});["localStorage","sessionStorage"].forEach(function(n){try{Object.defineProperty(window,n,{value:st,configurable:true})}catch(e){}});addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href");if(/^(#|https?:|mailto:|tel:|javascript:)/i.test(h))return;e.preventDefault();parent.postMessage({sia:"nav",to:h.split("#")[0].split("?")[0]},"*")})})()<\/scr'+'ipt>'}
+function pyDoc(m){const F=JSON.stringify(Object.fromEntries(Object.entries(S.files).filter(([n])=>/\.py$/i.test(n)))).replace(/</g,'\\u003c');
+ return '<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;background:#0d0709;color:#ffd9de;font:14px/1.5 ui-monospace,monospace"><pre id="o" style="padding:14px;white-space:pre-wrap">⏳ Chargement de Python (environ 10 Mo la première fois)…</pre><scr'+'ipt src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"><\/scr'+'ipt><scr'+'ipt>(async function(){var o=document.getElementById("o");try{var py=await loadPyodide();py.setStdout({batched:function(s){o.textContent+=s+"\\n"}});py.setStderr({batched:function(s){o.textContent+=s+"\\n"}});o.textContent="";var F='+F+';for(var n in F)py.FS.writeFile(n.split("/").pop(),F[n]);await py.runPythonAsync(F['+JSON.stringify(m)+']);if(!o.textContent)o.textContent="✅ Terminé (aucun texte affiché)."}catch(e){o.textContent+="\\n⚠️ "+e.message}})()<\/scr'+'ipt>'}
+function build(force){
+ const P=pages(),Y=pys(),sel=$('#pg');
+ sel.innerHTML=P.map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('')+Y.map(n=>'<option value="'+esc(n)+'">▶ '+esc(n)+'</option>').join('');
+ if(!S.files[cur])cur=P.includes('index.html')?'index.html':(P[0]||Y[0]||'');
+ sel.value=cur;
+ const k=JSON.stringify(S.files)+'|'+cur;if(!force&&k==lastK)return;lastK=k;
+ if(/\.py$/i.test(cur)){if(force)$('#pv').srcdoc=pyDoc(cur);return}
+ const raw=S.files[cur]||'';let h=raw;
+ for(const[n,c]of Object.entries(S.files)){
+  if(/\.css$/i.test(n)){const re=new RegExp('<link[^>]*href=["\'][^"\']*'+esr(n)+'["\'][^>]*>','i');h=re.test(h)?h.replace(re,()=>'<style>'+c+'</style>'):h.replace(/<\/head>/i,()=>'<style>'+c+'</style></head>')}
+  if(/\.jsx?$/i.test(n)){const j=/\.jsx$/i.test(n),re=new RegExp('<scr'+'ipt([^>]*?)src=["\'][^"\']*'+esr(n)+'["\']([^>]*)><\\/scr'+'ipt>','i');
+   if(re.test(h))h=h.replace(re,(m,a,b)=>scr(a+b,c,j));
+   else if(/^(script|main|app|index)\.jsx?$/i.test(n.split('/').pop()))h=/<\/body>/i.test(h)?h.replace(/<\/body>/i,()=>scr('',c,j)+'</body>'):h+scr('',c,j)}}
+ if(!/react(\.production|\.development|-dom|@\d)/i.test(raw)&&(Object.keys(S.files).some(n=>/\.jsx$/i.test(n))||/text\/babel/.test(raw)||/ReactDOM/.test(Object.values(S.files).join('\n')))){
+  const L='<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"><\/scr'+'ipt><scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"><\/scr'+'ipt><scr'+'ipt src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.2/babel.min.js"><\/scr'+'ipt>';
+  h=/<\/head>/i.test(h)?h.replace(/<\/head>/i,()=>L+'</head>'):L+h}
+ h=/<head[^>]*>/i.test(h)?h.replace(/<head[^>]*>/i,m=>m+shim()):shim()+h;
+ $('#pv').srcdoc=h}
+addEventListener('message',e=>{const d=e.data;if(!d||e.source!==$('#pv').contentWindow)return;
+ if(d.sia=='store')PVS=d.d;
+ if(d.sia=='nav'){const t=String(d.to).replace(/^\.?\//,''),n=Object.keys(S.files).find(k=>k==t||k.split('/').pop()==t.split('/').pop());if(n&&/\.html?$/i.test(n)){cur=n;build(true)}}});
+$('#pg').onchange=e=>{cur=e.target.value;build(true)};$('#pr').onclick=()=>build(true);$('#pc').onclick=()=>{PVS={};build(true)};
+function draw(){
+ const L=$('#log');L.innerHTML=S.msgs.length||busy?'':'<p class="em">Écris un message ou donne un brief aux IA. Ajoute d’abord tes clés dans ⚙️ Réglages.</p>';
+ S.msgs.forEach((m,i)=>{const a=AG.find(x=>x.id==m.w),d=document.createElement('div');d.className='m'+(a?'':' me')+(m.tag?' dec':'');if(a)d.style.setProperty('--c',a.c);
+  d.innerHTML=(a?'<b>'+a.n+(m.tag?' · '+esc(m.tag):'')+'</b><small>'+esc(m.lb||'')+'</small>':'')+files(m.t).map(f=>'<button class="chip" data-n="'+esc(f.n)+'">📄 '+esc(f.n)+'</button>').join('')+(m.sp||[]).map(n=>'<button class="chip" data-n="'+esc(n)+'">✂️ '+esc(n)+'</button>').join('')+esc(strip(m.t))+(m.img?'<img class="pic" src="'+m.img+'">':'')+(a&&!m.t.startsWith('⚠️')?'<div><button class="spk" data-s="'+i+'">🔊 Écouter</button></div>':'');L.append(d)});
+ if(busy){const d=document.createElement('div');d.className='m';d.textContent='⏳ '+busy+' réfléchit…';L.append(d)}
+ L.scrollTop=L.scrollHeight;
+ const C=$('#codes'),e=Object.entries(S.files);C.innerHTML=e.length?'':'<p class="em">Les fichiers créés par les IA apparaissent ici.</p>';
+ e.forEach(([n,c])=>{const d=document.createElement('div');d.className='f';d.innerHTML='<div class="fh"><button class="chip" data-n="'+esc(n)+'" style="margin:0">📄 '+esc(n)+'</button><button class="cp" data-c="'+esc(n)+'" style="margin:0">Copier le code</button></div><pre>'+esc(c)+'</pre>';C.append(d)});
+ build()}
+document.addEventListener('click',async e=>{
+ const sp=e.target.closest('.spk');if(sp){speak(sp);return}
+ const q=e.target.closest('.at');if(q){const i=$('#in');i.value=q.dataset.at+' '+i.value.replace(/^@\w+\s*/,'');i.focus();grow();return}
+ const b=e.target.closest('[data-n],[data-c]');if(!b)return;const t=b.dataset.c?S.files[b.dataset.c]:b.dataset.n,o=b.textContent;
+ try{await navigator.clipboard.writeText(t)}catch(_){}b.classList.add('ok');b.textContent=b.dataset.c?'Code copié ✓':'Nom copié ✓';setTimeout(()=>{b.classList.remove('ok');b.textContent=o},1400)});
+async function send(){
+ let t=$('#in').value.trim();if(!t&&!img)return;t=t||'Regarde cette image.';$('#in').value='';grow();S.msgs.forEach(m=>delete m.img);S.msgs.push(img?{w:'me',t,img}:{w:'me',t});clearImg();save();draw();stop=false;$('#stp').style.display='';$('#go').disabled=true;
+ const A=act();if(!A.length){S.msgs.push({w:'archi',t:'⚠️ Aucune IA active. Active-en une dans ⚙️ Réglages.',lb:''});draw()}
+ else if(S.mode==1){for(let i=0;i<S.mx&&!stop;i++){const a=A[i%A.length];await turn(a);if(a.id=='crit'&&/^\s*VALID[ÉE]/i.test(last))break}}
+ else if(S.mode==2){for(const a of A){if(stop)break;await turn(a,'Donne ton avis en 4 phrases maximum.')}
+  if(!stop&&A.length>1)await turn(A[0],'Tu présides la séance : synthétise les avis ci-dessus, tranche, et donne à Emmanuel la réponse finale, claire et courte.','Décision de l’équipe')}
+ else{const x=A.find(a=>t.toLowerCase().includes('@'+a.n.toLowerCase()));for(const a of x?[x]:A){if(stop)break;await turn(a)}}
+ $('#stp').style.display='none';$('#go').disabled=false}
+const grow=()=>{const i=$('#in');i.style.height='auto';i.style.height=Math.min(i.scrollHeight,150)+'px'};
+$('#in').oninput=grow;$('#go').onclick=send;$('#stp').onclick=()=>stop=true;
+const mode=()=>{const m=MODES[S.mode];$('#mode').textContent=m[0];$('#mode').className='btn s '+m[2];$('#mh').textContent=m[1]};
+$('#mode').onclick=()=>{S.mode=(S.mode+1)%3;save();mode()};
+$('#nv').onclick=e=>{const i=[...$('#nv').children].indexOf(e.target.closest('button'));if(i<0)return;[...$('#nv').children].forEach((b,j)=>b.classList.toggle('on',j==i));document.querySelectorAll('.v').forEach((v,j)=>v.classList.toggle('on',j==i))};
+['k1','k2','mx'].forEach(k=>{$('#'+k).value=S[k];$('#'+k).oninput=e=>{S[k]=k=='mx'?+e.target.value||6:e.target.value.trim();save()}});
+$('#cfg').innerHTML=AG.map(a=>'<div class="card" style="border-left:3px solid '+a.c+'"><h3 style="color:'+a.c+'">'+a.n+'</h3><div class="g3"><select data-a="'+a.id+'" data-f="p"><option value="1">Gemini</option><option value="2">OpenRouter</option></select><select data-a="'+a.id+'" data-f="on"><option value="1">Actif</option><option value="0">Désactivé</option></select></div><label>Modèle</label><input data-a="'+a.id+'" data-f="m"></div>').join('');
+document.querySelectorAll('[data-a]').forEach(el=>{const c=S.ag[el.dataset.a],f=el.dataset.f;el.value=f=='on'?(c.on?1:0):c[f];el.oninput=()=>{c[f]=f=='p'?+el.value:f=='on'?el.value=='1':el.value.trim();save()}});
+$('#clr').onclick=()=>{if(confirm('Vider messages et fichiers ?')){S.msgs=[];S.files={};PVS={};save();draw()}};
+$('#clr').style.display='';
+$('#ag').innerHTML=AG.map(a=>'<i data-i="'+a.id+'" style="color:'+a.c+'">'+a.n+'</i>').join('');
+$('#ats').innerHTML=AG.map(a=>'<button class="at" data-at="@'+a.n+'" style="color:'+a.c+'">@'+a.n+'</button>').join('');
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
+$('#mic').onclick=()=>{
+ if(!SR){alert('La dictée vocale n’est pas disponible ici. Ouvre la page dans Chrome.');return}
+ if(rec){rec.stop();return}
+ rec=new SR();rec.lang='fr-FR';rec.interimResults=true;rec.continuous=true;
+ const base=$('#in').value?$('#in').value.trim()+' ':'';
+ rec.onresult=e=>{$('#in').value=base+Array.from(e.results).map(r=>r[0].transcript).join(' ');grow()};
+ rec.onend=()=>{rec=null;$('#mic').classList.remove('rec');$('#mic').textContent='🎤'};
+ rec.onerror=e=>{if(e.error=='not-allowed'||e.error=='service-not-allowed')alert('Autorise le micro pour ce site dans les réglages de Chrome.')};
+ try{rec.start();$('#mic').classList.add('rec');$('#mic').textContent='⏹'}catch(_){rec=null}};
+let img='',spkBtn=null;
+function clearImg(){img='';$('#th').style.display='none';$('#fi').value=''}
+$('#att').onclick=()=>$('#fi').click();$('#thx').onclick=clearImg;
+$('#fi').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,1024/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.72);$('#thi').src=img;$('#th').style.display='flex'};i.src=r.result};r.readAsDataURL(f)};
+function speak(b){
+ if(!('speechSynthesis'in window)){alert('La lecture vocale n’est pas disponible ici. Ouvre la page dans Chrome.');return}
+ const was=b===spkBtn&&speechSynthesis.speaking;speechSynthesis.cancel();if(spkBtn)spkBtn.textContent='🔊 Écouter';spkBtn=null;if(was)return;
+ const m=S.msgs[+b.dataset.s];let t=strip(m.t).replace(/[*#`_>]/g,'');if(!t)t='J’ai créé : '+files(m.t).map(f=>f.n).join(', ');
+ const ch=(t.match(/[^.!?\n]+[.!?\n]*/g)||[t]).reduce((a,x)=>{if(a.length&&(a[a.length-1]+x).length<200)a[a.length-1]+=x;else a.push(x);return a},[]);
+ const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));spkBtn=b;b.textContent='⏹ Arrêter';
+ ch.forEach((x,i)=>{const u=new SpeechSynthesisUtterance(x);u.lang='fr-FR';if(v)u.voice=v;if(i==ch.length-1)u.onend=()=>{if(spkBtn===b){b.textContent='🔊 Écouter';spkBtn=null}};speechSynthesis.speak(u)})}
+mode();draw();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
